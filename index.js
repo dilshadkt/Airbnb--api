@@ -22,7 +22,7 @@ mongoose
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://airbnb-api-7y1p.onrender.com",
   })
 );
 app.use(express.json({ extended: true }));
