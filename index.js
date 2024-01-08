@@ -20,11 +20,7 @@ mongoose
   .then(() => console.log("connetion is good"))
   .catch((err) => console.log(err));
 
-app.use(
-  cors({
-    origin: "https://airbnb-api-7y1p.onrender.com",
-  })
-);
+app.use(cors());
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: false }));
 app.use("*", cloudinaryConfig);
