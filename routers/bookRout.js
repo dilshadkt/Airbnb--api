@@ -6,10 +6,10 @@ const {
   DeleteTrips,
 } = require("../controllers/BookControler");
 const asyncMiddleware = require("../middlewares/AsyncMiddleware");
-
-router.post("/stay/:userId", asyncMiddleware(postReserve));
-router.get("/stay/:userId", asyncMiddleware(GetAllReserve));
-router.get("/trip/:userId", asyncMiddleware(GetTrip));
-router.delete("/trip/:tripId", DeleteTrips);
+const VerifyToken = require("../middlewares/VerifyToken");
+router.post("/stay", VerifyToken, asyncMiddleware(postReserve));
+router.get("/stay", VerifyToken, asyncMiddleware(GetAllReserve));
+router.get("/trip", VerifyToken, asyncMiddleware(GetTrip));
+router.delete("/trip/:tripId", VerifyToken, DeleteTrips);
 
 module.exports = router;

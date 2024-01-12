@@ -11,6 +11,7 @@ const BookRout = require("./routers/bookRout");
 const adminRout = require("./routers/admin");
 const paymentRout = require("./routers/payment");
 const graphRouter = require("./routers/graphRoute");
+const forgetPassRout = require("./routers/forgetPassRout");
 const error = require("./middlewares/ErrorHandle");
 const { cloudinaryConfig } = require("./config/Couldinary");
 
@@ -21,6 +22,7 @@ mongoose
   .catch((err) => console.log(err));
 
 app.use(cors());
+
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: false }));
 app.use("*", cloudinaryConfig);
@@ -32,7 +34,10 @@ app.use("/admin", userRout);
 app.use("/admine/property", adminRout);
 app.use("/payment", paymentRout);
 app.use("/data", graphRouter);
+app.use("/otp", forgetPassRout);
+app.use(error);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log("listning on port " + process.env.PORT);
 });
+  

@@ -3,14 +3,14 @@ const { WhishList } = require("../model/Whishlist");
 
 /////////ADD WHISH LIST  (✿◡‿◡) ////////////////////
 const addwhishList = async (req, res, next) => {
-  let user = await User.findById(req.params.userId);
+  let user = await User.findById(req.user);
   const IsExist = await WhishList.findOne({ user: user._id });
 
   if (IsExist) {
     IsExist.property.push(req.query.propertyId);
     await IsExist.save();
 
-    res.send(IsExist.property);
+    res.status(201).send(IsExist.property);
   } else {
     const newWish = new WhishList({
       user: user._id,
@@ -25,7 +25,7 @@ const addwhishList = async (req, res, next) => {
 
 //////////// GET WHISH LIST  ///////////////////
 const GetWhishList = async (req, res) => {
-  const whish = await WhishList.findOne({ user: req.params.userId }).populate(
+  const whish = await WhishList.findOne({ user: req.user._id }).populate(
     "property"
   );
   let user = await User.findById(req.params.userId)
@@ -44,7 +44,8 @@ const GetWhishList = async (req, res) => {
 
 ///// DELETE WISHLIST  ////////////////////
 const DeleteWhishList = async (req, res) => {
-  let whislist = await WhishList.findOne({ user: req.params.userId });
+  const userId = req.user._id;
+  let whislist = await WhishList.findOne({ user: userId });
   const result = whislist.property.filter(
     (item) => item.toString() !== req.query.propertyId
   );

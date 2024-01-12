@@ -12,19 +12,27 @@ const geAlltList = async (req, res) => {
 
   if (req.query.id) {
     const user = await User.findOne({ _id: properties.hostid });
-    res.status(200).json({ ...properties._doc, hostName: user.firstName });
+    res
+      .status(200)
+      .json({
+        ...properties._doc,
+        hostName: user.firstName,
+        profile: user.profilePicture,
+      });
   } else res.status(200).json(properties);
 };
 
 //// GET ALL LIST OF USER //////////////////////
 const getAllListUser = async (req, res) => {
-  const property = await Property.find({ hostid: req.params.userId });
+  const userId = req.user._id;
+  const property = await Property.find({ hostid: userId });
   res.send(property);
 };
 
 ///////// POST A LIST (PROPERTY) ☆*: .｡. o(≧▽≦)o .｡.:*☆ ////////
 const postList = async (req, res) => {
   let Files = req.files;
+
   if (!Files) return res.status(400).json({ message: "No picture attached!" });
 
   let multiplePicturePromise = Files.map((picture) =>
@@ -48,11 +56,11 @@ const postList = async (req, res) => {
       "security",
     ])
   );
-  property.hostid = req.query.userId;
+  property.hostid = req.user._id;
   property.isVefied = false;
   property.images = imageResponses.map((item) => item.url);
 
-  const user = await User.findById(req.query.userId);
+  const user = await User.findById(req.user._id);
 
   user.userType = "host";
   await user.save();

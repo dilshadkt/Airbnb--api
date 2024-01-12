@@ -12,6 +12,8 @@ const {
   customeFilter,
   getOwnerDetails,
 } = require("../controllers/ListController");
+const VerifyToken = require("../middlewares/VerifyToken");
+const VerifyAdmin = require("../middlewares/VerifyAdmin");
 
 router.patch(
   "/:propertyId",
@@ -21,13 +23,19 @@ router.patch(
 router.get("/", asyncMiddleware(geAlltList));
 router.post(
   "/become-a-host",
+  VerifyToken,
   upload.array("photos", 6),
   asyncMiddleware(postList)
 );
-router.get("/data", asyncMiddleware(filteredList));
-router.get("/filtered", asyncMiddleware(customeFilter));
-router.get("/manageList/:userId", asyncMiddleware(getAllListUser));
-router.delete("/:propertyId", asyncMiddleware(DeletList));
-router.get("/user/:propertyId", asyncMiddleware(getOwnerDetails));
+router.get("/data", VerifyToken, asyncMiddleware(filteredList));
+router.get("/filtered", VerifyToken, asyncMiddleware(customeFilter));
+router.get("/manageList", VerifyToken, asyncMiddleware(getAllListUser));
+router.delete(
+  "/:propertyId",
+  VerifyToken,
+  VerifyAdmin,
+  asyncMiddleware(DeletList)
+);
+router.get("/user/:propertyId", VerifyToken, asyncMiddleware(getOwnerDetails));
 
 module.exports = router;

@@ -6,10 +6,11 @@ const {
   GetAllWishlist,
 } = require("../controllers/WishList");
 const asyncMiddleware = require("../middlewares/AsyncMiddleware");
+const verifyToken = require("../middlewares/VerifyToken");
 
-router.post("/:userId", asyncMiddleware(addwhishList));
-router.get("/:userId", asyncMiddleware(GetWhishList));
-router.get("/", asyncMiddleware(GetAllWishlist));
-router.delete("/:userId", asyncMiddleware(DeleteWhishList));
+router.post("/", verifyToken, asyncMiddleware(addwhishList));
+router.get("/:userId", verifyToken, asyncMiddleware(GetWhishList));
+router.get("/all", verifyToken, asyncMiddleware(GetAllWishlist));
+router.delete("/", verifyToken, asyncMiddleware(DeleteWhishList));
 
 module.exports = router;

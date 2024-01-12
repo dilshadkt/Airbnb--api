@@ -48,7 +48,8 @@ const Sign = async (req, res) => {
   res.status(200).send({ token, user, propertyId });
 };
 
-/// GOOGLE SIGN   🚀🚀🚀🚀///////////////
+/////////////   GOOGLE SIGN   🚀🚀🚀🚀///////////////
+
 const googleSign = async (req, res) => {
   const { given_name, picture, email } = req.body.data;
   const user = await User.findOne({ email: email });
@@ -78,18 +79,19 @@ const GetAllUser = async (req, res) => {
 
 ////// UPDATE USER 👨‍🔧👨‍🔧👨‍🔧 //////
 const UpdateUser = async (req, res) => {
+  const userId = req.user._id;
   if (req.file) {
     const file = req.file;
     if (!file)
       return res.status(400).json({ message: "no picture is provide" });
     const image = await uploader.upload(file.path);
-    const user = await User.findById(req.params.userId);
+    const user = await User.findById(userId);
     if (!user) return res.status(400).send("no user found");
     user.profilePicture = image.url;
     await user.save();
     res.status(200).send(image.url);
   } else {
-    const user = await User.findById(req.params.userId);
+    const user = await User.findById(userId);
     user[Object.keys(req.body)] = Number(Object.values(req.body).toString());
     await user.save();
     res.send(user);

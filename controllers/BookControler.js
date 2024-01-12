@@ -34,21 +34,21 @@ const postReserve = async (req, res) => {
 
 /////// GET ALLL RESERVATION ///////////////
 const GetAllReserve = async (req, res) => {
-  const user = await User.findById(req.params.userId)
+  const userId = req.user._id;
+  const user = await User.findById(userId)
     .populate({
       path: "reservation",
       populate: { path: "listingId" },
     })
     .select({ reservation: 1 });
-  if (user.reservation.length === 0) return res.status(200).send(false);
+  if (user.reservation.length === 0) return res.status(200).send([]);
   res.send(user.reservation);
 };
 
 ///// GET ALL TRIPS ////////
 const GetTrip = async (req, res) => {
-  const trips = await Reserve.find({ guestId: req.params.userId }).populate(
-    "listingId"
-  );
+  const userId = req.user._id;
+  const trips = await Reserve.find({ guestId: userId }).populate("listingId");
   res.send(trips);
 };
 
