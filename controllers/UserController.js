@@ -15,6 +15,7 @@ const Login = async (req, res) => {
   const user = new User(
     _.pick(req.body, ["firstName", "lastName", "email", "password"])
   );
+
   user.password = await bycrypt.hash(user.password.toString(), salt);
   const newUser = await user.save();
   const token = user.generateAuthToken();

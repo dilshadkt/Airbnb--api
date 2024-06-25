@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
-const WhishList = require("./Whishlist");
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -21,7 +20,9 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function () {
+      return this.socialType !== "google";
+    },
     minlength: 5,
   },
   profilePicture: {
@@ -47,9 +48,15 @@ const userSchema = new mongoose.Schema({
   },
   socialType: {
     type: String,
-    enum: ["google"],
+    enum: ["google", ""], // Added an empty string for traditional signups
+  },
+  googleUser: {
+    type: mongoose.Schema.ObjectId,
+    ref: "GoogleUser",
   },
 });
+
+// JWT Token generation method
 userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     { _id: this._id, userType: this.userType },
@@ -57,15 +64,23 @@ userSchema.methods.generateAuthToken = function () {
   );
   return token;
 };
+
+// User Model
 const User = mongoose.model("User", userSchema);
 
-//////////// joi validaiton 🥷🥷 /////////////
+// Joi validation for user input
+
 function validateUser(user) {
   const Schema = Joi.object({
     firstName: Joi.string().required().max(100),
     lastName: Joi.string().required().min(2).max(10),
     email: Joi.string().min(5).max(200).required().email(),
-    password: Joi.string().required().min(5).max(12),
+    password: Joi.string().when("socialType", {
+      is: Joi.exist().valid(""),
+      then: Joi.string().required().min(5).max(12),
+      otherwise: Joi.forbidden(),
+    }),
+    socialType: Joi.string().valid("", "google"),
   });
   return Schema.validate(user);
 }

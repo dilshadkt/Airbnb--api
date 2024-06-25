@@ -13,6 +13,7 @@ const paymentRout = require("./routers/payment");
 const graphRouter = require("./routers/graphRoute");
 const forgetPassRout = require("./routers/forgetPassRout");
 const error = require("./middlewares/ErrorHandle");
+const LoginRoute = require("./routers/LoginRoute");
 const { cloudinaryConfig } = require("./config/Couldinary");
 
 /////////// connecting to mongodb //////////
@@ -35,9 +36,9 @@ app.use("/admine/property", adminRout);
 app.use("/payment", paymentRout);
 app.use("/data", graphRouter);
 app.use("/otp", forgetPassRout);
+app.use("/api/auth", LoginRoute);
 app.use(error);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log("listning on port " + process.env.PORT);
 });
-  
