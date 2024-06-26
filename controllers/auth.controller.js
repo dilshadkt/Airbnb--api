@@ -1,6 +1,6 @@
 const { GoogleUser } = require("../model/GoogleUser");
 const { User } = require("../model/User");
-
+const _ = require("lodash");
 const handleLogin = async (req, res) => {
   const userData = req.body;
   let googleUser = await GoogleUser.findOne({ googleId: userData.googleId });
@@ -10,7 +10,7 @@ const handleLogin = async (req, res) => {
   }
   let user = await User.findOne({ email: userData.email });
   if (!user) {
-    const user = new User({
+    user = new User({
       firstName: userData.firstName,
       lastName: userData.lastName,
       email: userData.email,
@@ -24,7 +24,14 @@ const handleLogin = async (req, res) => {
     await user.save();
   }
   const token = user.generateAuthToken();
-  res.status(200).json({ token });
+  const { password: userPassword, userType, ...userInfo } = user.toObject();
+  const age = 1000 * 60 * 60 * 24 * 7;
+  res
+    .cookie("token", token, {
+      httpOnly: true,
+      maxAge: age,
+    })
+    .json({ token, user: userInfo });
 };
 
 module.exports = { handleLogin };

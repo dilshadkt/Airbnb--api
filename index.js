@@ -14,6 +14,7 @@ const graphRouter = require("./routers/graphRoute");
 const forgetPassRout = require("./routers/forgetPassRout");
 const error = require("./middlewares/ErrorHandle");
 const LoginRoute = require("./routers/LoginRoute");
+const OtpVerifyRoute = require("./routers/OtpVerifyRoute");
 const { cloudinaryConfig } = require("./config/Couldinary");
 
 /////////// connecting to mongodb //////////
@@ -37,6 +38,7 @@ app.use("/payment", paymentRout);
 app.use("/data", graphRouter);
 app.use("/otp", forgetPassRout);
 app.use("/api/auth", LoginRoute);
+app.use("/api/otp", OtpVerifyRoute);
 app.use(error);
 
 app.listen(process.env.PORT || 5000, () => {
