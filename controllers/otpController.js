@@ -8,8 +8,8 @@ const generatOtp = () => Math.floor(100000 + Math.random() * 900000);
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "hmydilshadkt@gmail.com",
-    pass: "epfl loxz axgs orbp",
+    user: process.env.USER_NAME,
+    pass: process.env.APP_PASSWORD,
   },
 });
 
@@ -19,7 +19,21 @@ const sendOTP = (userEmail, otp) => {
     from: "hmydilshadkt@gmail.com",
     to: userEmail,
     subject: "Password Reset OTP",
-    text: `Your OTP for password reset is: ${otp}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; color: #333; background-color: #f4f4f4; padding: 20px; border-radius: 8px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="https://airbnb-clone-six-rust.vercel.app/assets/logo.png" alt="Your Company Logo" style="height: 50px; width: auto;">
+        </div>
+        <div style="background-color: #ffffff; padding: 20px; border-radius: 8px;">
+          <h2 style="color: #FF5A5F; text-align: center;">Team Airbnb</h2>
+          <h3 style="color: #4CAF50;">Password Reset OTP</h3>
+          <p>Your OTP for password reset is:</p>
+          <p style="font-size: 24px; font-weight: bold; color: #ff5733;">${otp}</p>
+          <p>If you didn't request this, please ignore this email.</p>
+        </div>
+      </div>
+    `,
+    // text: `Your OTP for password reset is: ${otp}`,
   };
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {

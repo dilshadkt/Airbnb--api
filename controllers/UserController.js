@@ -10,13 +10,18 @@ const { uploader } = require("../config/Couldinary");
 const Login = async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-
+  const { email } = req.body;
+  const isThereAnyUser = await User.findOne({ email });
+  if (isThereAnyUser) {
+    return res.status(400).send("This user already exist");
+  }
   const salt = await bycrypt.genSalt(10);
   const user = new User(
     _.pick(req.body, ["firstName", "lastName", "email", "password"])
   );
 
   user.password = await bycrypt.hash(user.password.toString(), salt);
+
   const newUser = await user.save();
   const token = user.generateAuthToken();
   res.header("X-auth-token", token).json({ user: newUser, token });
